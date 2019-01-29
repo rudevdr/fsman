@@ -86,7 +86,7 @@ class Indicator():
         sleep(0.15)
         self.idc_panel.bottom()
 
-    def delete_inc(self):
+    def delete_idc(self):
         self.idc_window.erase()
         self.update_draw()
         del self
