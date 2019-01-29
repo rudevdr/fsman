@@ -1,5 +1,6 @@
 from curses import *
 from curses.panel import *
+from curses import error as error
 
 from time import sleep
 
@@ -36,7 +37,7 @@ class Indicator():
         idc_panel = new_panel(idc_window)
         try:
             idc_window.addstr(self.idc_text, self.color)
-        except:
+        except error:
             pass
         #idc_window.bkgd(color_pair(1))
         self.update_draw()
