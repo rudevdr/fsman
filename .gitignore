@@ -3,3 +3,8 @@ test*
 *svg
 __pycache__
 case_studies
+
+.idea
+
+keeper/
+*.*
