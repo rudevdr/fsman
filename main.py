@@ -1,10 +1,11 @@
 from curses import *
-#from curses.panel import *
+# from curses.panel import *
 from glob import glob
 
 import provider
 
 import view_list
+
 
 def main(stdscr):
     curs_set(0)
@@ -19,14 +20,14 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
 
-
     paths = provider.glob()
     inc_text = "~> "
     lendinc = len(inc_text)
 
     view_list.init(stdscr, 15, 10, paths, inc_text)
 
-    #DON'T ADD ANYTHING HERE. AFTER CALLING VIEW_LIST's INIT, getch() will handle user input inside 'view_list' module
+    # DON'T ADD ANYTHING HERE. AFTER CALLING VIEW_LIST's INIT, getch() will handle user input inside 'view_list' module
+
 
 if __name__ == '__main__':
     wrapper(main)
