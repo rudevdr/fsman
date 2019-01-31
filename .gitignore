@@ -6,5 +6,7 @@ case_studies
 
 .idea
 
-keeper/
-*.*
+/
+*.*.*
+*vim
+*/*
