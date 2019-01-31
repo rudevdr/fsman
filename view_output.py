@@ -1,10 +1,10 @@
 from curses import newwin, doupdate
 from curses.panel import new_panel, update_panels
 
-def update_view(vieww, keeper):
+def update_view(vieww, output):
     vieww.erase()
     vieww.box()
-    vieww.addstr(1, 3, ' '.join(keeper.get_all_obj()))
+    vieww.addstr(1, 3, output)
 
 def init(viewo_padding, line_y, lst_window_width, keeper):
 
