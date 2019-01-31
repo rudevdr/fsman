@@ -74,15 +74,29 @@ class Indicator():
         self.idc_panel.top()
         self.update_draw()
 
+    def move_top(self):
+        self.current_index = 0
+        self.update_data()
+        self.idc_panel.move(self.current_posy, self.current_posx)
+        self.idc_panel.top()
+        self.update_draw()
+
+    def move_bottom(self):
+        self.current_index = len(self.lst_data) -1
+        self.update_data()
+        self.idc_panel.move(self.current_posy, self.current_posx)
+        self.idc_panel.top()
+        self.update_draw()
+
     def update_draw(self):
         update_panels()
         doupdate()
 
-    def move_to_top(self):
+    def move_panel_to_top(self):
         sleep(0.15)
         self.idc_panel.top()
 
-    def move_to_bottom(self):
+    def move_panel_to_bottom(self):
         sleep(0.15)
         self.idc_panel.bottom()
 
