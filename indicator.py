@@ -6,6 +6,7 @@ from time import sleep
 
 class Indicator():
 
+
     def __init__(self, lst_data, idc_text, default_index, color_pair):
         self.idc_text = idc_text
         self.lenidc = len(self.idc_text)
@@ -32,6 +33,7 @@ class Indicator():
         self.idc_window_panel = self.draw_idc(self.current_posy, self.current_posx)
         self.idc_window, self.idc_panel = self.idc_window_panel[0], self.idc_window_panel[1]
 
+
     def draw_idc(self, posy, posx):
         idc_window = newwin(1, self.lenidc, posy, posx)
         idc_panel = new_panel(idc_window)
@@ -43,12 +45,14 @@ class Indicator():
         self.update_draw()
         return idc_window, idc_panel
 
+
     def increment_index(self):
         if self.current_index >= self.max_index:
             self.current_index = 0
         else:
             self.current_index +=1
         self.update_data()
+
 
     def decrement_index(self):
         if self.current_index <= 0:
@@ -57,10 +61,12 @@ class Indicator():
             self.current_index -=1
         self.update_data()
 
+
     def update_data(self):
         self.current_obj   = self.lst_data[self.current_index][0]
         self.current_posy  = self.lst_data[self.current_index][1]
         self.current_posx  = self.lst_data[self.current_index][2] - self.lenidc
+
 
     def move_down(self):
         self.increment_index()
@@ -68,11 +74,13 @@ class Indicator():
         self.idc_panel.top()
         self.update_draw()
 
+
     def move_up(self):
         self.decrement_index()
         self.idc_panel.move(self.current_posy, self.current_posx)
         self.idc_panel.top()
         self.update_draw()
+
 
     def move_top(self):
         self.current_index = 0
@@ -81,6 +89,7 @@ class Indicator():
         self.idc_panel.top()
         self.update_draw()
 
+
     def move_bottom(self):
         self.current_index = len(self.lst_data) -1
         self.update_data()
@@ -88,17 +97,21 @@ class Indicator():
         self.idc_panel.top()
         self.update_draw()
 
+
     def update_draw(self):
         update_panels()
         doupdate()
+
 
     def move_panel_to_top(self):
         sleep(0.15)
         self.idc_panel.top()
 
+
     def move_panel_to_bottom(self):
         sleep(0.15)
         self.idc_panel.bottom()
+
 
     def delete_idc(self):
         self.idc_window.erase()
