@@ -74,14 +74,18 @@ def move_didc_up():
 def move_didc_down():
     didc.move_down()
 
+
 def move_didc_top():
     didc.move_top()
+
 
 def move_didc_bottom():
     didc.move_bottom()
 
+
 def didc_blink():
     didc.move_panel_to_top()
+
 
 def toggle_at_didc(idc):
     index = get_didc_index()
@@ -93,6 +97,7 @@ def toggle_at_didc(idc):
         add_idc(idc)
         move_didc_down()
         #didc_blink()
+
 
 def enable(idc):
     index = get_idc_index(idc)
