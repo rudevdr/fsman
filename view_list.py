@@ -2,17 +2,22 @@ from indicator import *
 
 import view_output
 import keeper
+import executor
 import handler
+
 
 def update():
     update_panels()
     doupdate()
+
 
 def init(stdscr, window_posy, window_posx, paths, inc_text):
 
     init_pair(1, COLOR_BLACK, COLOR_CYAN)
     init_pair(2, COLOR_BLACK, COLOR_BLUE)
     init_pair(3, COLOR_CYAN, COLOR_BLUE)
+    attribute_underline = color_pair(2) + A_REVERSE + A_UNDERLINE
+    attribute_nounderline = color_pair(2) + A_REVERSE
 
 
     lst_data = []
@@ -29,10 +34,10 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
     for index, path in enumerate(paths):
         lst_y = index + 1
         lst_x = lendinc + 1
-        lst_window.addstr(lst_y, lst_x, path, color_pair(2) | A_REVERSE)
+        lst_window.addstr(lst_y, lst_x, path, attribute_nounderline)
         lst_data.append((path, window_posy + lst_y, window_posx + lst_x))
 
-    keeper.add_didc(Indicator(lst_data, inc_text, 0, color_pair(2) | A_REVERSE))
+    keeper.add_didc(Indicator(lst_data, inc_text, 0, attribute_nounderline))
 
     view_output_padding = 50
     viewo = view_output.init(20, window_posy, lst_window_width, keeper)
@@ -41,7 +46,10 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
     lst_window.refresh()
     viewo.refresh()
 
-    handler.init(stdscr, lst_window, viewo)
+    attributes = (attribute_underline, attribute_nounderline)
+    executor.init(lst_data, attributes, stdscr, lst_window, viewo)
+
+    handler.update(startup=True)
 
     while True:
         key = stdscr.getch()
@@ -62,9 +70,9 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
                 keeper.enable(Indicator(lst_data, inc_text, index, color_pair(1) | A_REVERSE))
             keeper.didc_blink()
         elif key == ord('S'):
-            handler.execute(keeper.get_all_obj())
+            executor.enqueue(keeper.get_all_obj())
         elif key == ord('K'):
-            handler.kill(keeper.get_all_obj(), viewo)
+            executor.kill(keeper.get_all_obj(), viewo)
         elif key == ord('t'):
             keeper.toggle_at_didc(Indicator(lst_data, inc_text, keeper.get_didc_index(), color_pair(1) | A_REVERSE))
 
