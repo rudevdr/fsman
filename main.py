@@ -24,7 +24,7 @@ def main(stdscr):
     inc_text = "~> "
     lendinc = len(inc_text)
 
-    view_list.init(stdscr, 15, 10, paths, inc_text)
+    view_list.init(stdscr, 0, 0, paths, inc_text)
 
     # DON'T ADD ANYTHING HERE. AFTER CALLING VIEW_LIST's INIT, getch() will handle user input inside 'view_list' module
 
