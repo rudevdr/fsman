@@ -1,6 +1,6 @@
 import json
 
-SFILE = 'running/status.json'
+SFILE = 'status.json'
 
 
 def write(status):
@@ -44,7 +44,10 @@ def remove(path):
     path = str(path)
     if exists(path):
         status = read()
-        status.pop(path)
+        try:
+            status.pop(path)
+        except:
+            pass
         write(status)
         return True
     else:
@@ -74,9 +77,41 @@ def get(path, key):
 
     if exists(path):
         status = read()
-        return status.get(path).get(key)
+        status_path = status.get(path)
+        if status_path:
+            return status_path.get(key)
+        else:
+            return None
     else:
         return None
+
+
+def get_from_key(item, key, value):
+    '''
+    >>> get_from_key("path", "pid", 3225)
+    '''
+
+    all_values = get_all(key)
+    if all_values and value in all_values:
+        index = all_values.index(value)
+        item_key = valid_key(item)
+
+        paths = get_all("paths")
+        path = None
+
+        if bool(paths):
+            try:
+                path = paths[index]
+            except:
+                open('errors.txt', 'a').write("ERROR (from line 107 in status.py) PATHS: =>"+str(paths)+"\n")
+                return None
+        else:
+            return None
+
+        if item_key == "paths":
+            return path
+        elif item_key in ["pid", "command"]:
+            return get(path, item_key)
 
 
 def get_all(key):
@@ -94,6 +129,10 @@ def get_all(key):
         return values
     else:
         return None
+
+
+def is_empty():
+    return not bool(read())
 
 
 def read_list():
