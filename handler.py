@@ -1,36 +1,62 @@
-import subprocess
-import shlex
+import threading
+import psutil
+from time import sleep
 
 import status
-import view_output
-
 import executor
 
-rfile = 'running/status.json'
 
-stdscr = view_lst = view_o = None
-
-
-def init(stdscr_l, view_lst_l, view_o_l):
-    global stdscr, view_lst, view_o
-    stdscr = stdscr_l
-    view_lst = view_lst_l
-    view_o = view_o_l
-
-def generate_commands(paths):
-    commands = []
-    for path in paths:
-        command = "python "+path
-        commands.append(command)
-    return commands
-
-def execute(path):
-    #ignore already running processes
-    commands = generate_commands(paths)
-    executor.queue(commands)
-    #view_output.update_view(view_o, command)
+running_handler = False
 
 
-def kill(paths, viewo):
-    pass
+def update(startup=False):
+    if startup:
+        startup_underline()
+    if not running_handler:
+        run_handler()
 
+
+def startup_underline():
+    for path in status.get_all("path"):
+        update_view_lst(path, underline=True)
+
+
+def run_handler():
+    running_handler = True
+
+    p = threading.Thread(target=main)
+    p.daemon = True
+    p.start()
+
+
+def main():
+    while not status.is_empty():
+        check_for_deaths()
+        sleep(0.5)
+    running_handler = False
+
+
+def check_for_deaths():
+    if not status.is_empty():
+       pids = status.get_all("pid")
+       for pid in pids:
+           path = status.get_from_key("path", "pid", pid)
+           if path:
+               if not process_running(pid):
+                   status.remove(path)
+                   update_view_lst(path, underline=False)
+               else:
+                   pass
+                   #update view_output
+
+
+def update_view_lst(path, underline=True):
+    executor.update_view_lst(path, underline=underline)
+
+
+def process_running(pid):
+    try:
+        p = psutil.Process(pid)
+        return p.status() in [ psutil.STATUS_RUNNING, psutil.STATUS_SLEEPING ]
+    except psutil.NoSuchProcess:
+        return False
