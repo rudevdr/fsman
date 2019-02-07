@@ -116,8 +116,11 @@ def get_from_key(item, key, value):
 
 def get_all(key):
     status = read()
-    paths = list(status.keys())
-    key = valid_key(key)
+    if status:
+        paths = list(status.keys())
+        key = valid_key(key)
+    else:
+        return None
 
     if key == "paths":
         return paths
