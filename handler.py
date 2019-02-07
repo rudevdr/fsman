@@ -17,8 +17,10 @@ def update(startup=False):
 
 
 def startup_underline():
-    for path in status.get_all("path"):
-        update_view_lst(path, underline=True)
+    paths = status.get_all("paths")
+    if paths:
+        for path in paths:
+            update_view_lst(path, underline=True)
 
 
 def run_handler():
