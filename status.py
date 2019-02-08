@@ -1,6 +1,6 @@
 import json
 
-SFILE = 'status.json'
+SFILE = '/home/rud/proj_brutleg/brutleg/fsman/status.json'
 
 
 def write(status):
@@ -20,7 +20,7 @@ def read():
     except json.JSONDecodeError:
         return {}
     except FileNotFoundError:
-        clear()
+        return clear()
 
 
 def add(path, pid, command):
