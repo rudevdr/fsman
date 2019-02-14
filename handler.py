@@ -1,6 +1,8 @@
 import threading
 import psutil
 from time import sleep
+import os
+import sys
 
 import status
 import executor
@@ -10,6 +12,8 @@ running_handler = False
 
 
 def update(startup=False):
+    global running_handler
+
     if startup:
         startup_underline()
     if not running_handler:
@@ -32,10 +36,12 @@ def run_handler():
 
 
 def main():
+    #sys.stdout.write("MAIN ")
     while not status.is_empty():
         check_for_deaths()
         sleep(0.5)
     running_handler = False
+    #sys.stdout.write("END ")
 
 
 def check_for_deaths():
@@ -45,12 +51,18 @@ def check_for_deaths():
            path = status.get_from_key("path", "pid", pid)
            if path:
                if not process_running(pid):
+                   remove_stdout(status.get(path, "stdout"))
                    status.remove(path)
                    update_view_lst(path, underline=False)
                else:
                    pass
                    #update view_output
 
+def remove_stdout(filename):
+    try:
+        os.remove(filename)
+    except FileNotFoundError:
+        pass
 
 def update_view_lst(path, underline=True):
     executor.update_view_lst(path, underline=underline)
