@@ -23,10 +23,10 @@ def read():
         return clear()
 
 
-def add(path, pid, command):
+def add(path, pid, stdout):
     status = read()
 
-    status.update({path: {"pid": pid, "command": command}})
+    status.update({path: {"pid": pid, "stdout": stdout}})
 
     write(status)
 
@@ -59,8 +59,8 @@ def valid_key(key):
         return "paths"
     elif key in ["pid", "PID", "Pid", "p", "pi"]:
         return "pid"
-    elif key in ["command", "COMMAND", "Command", "c"]:
-        return "command"
+    elif key in ["stdout", "STDOUT", "Stdout", "output"]:
+        return "stdout"
     else:
         return None
 
@@ -72,7 +72,7 @@ def get(path, key):
 
     path = str(path)
     key = valid_key(key)
-    if key not in ["pid", "command"]:
+    if key not in ["pid", "stdout"]:
         return None
 
     if exists(path):
@@ -110,7 +110,7 @@ def get_from_key(item, key, value):
 
         if item_key == "paths":
             return path
-        elif item_key in ["pid", "command"]:
+        elif item_key in ["pid", "stdout"]:
             return get(path, item_key)
 
 
@@ -124,7 +124,7 @@ def get_all(key):
 
     if key == "paths":
         return paths
-    elif key in ["pid", "command"]:
+    elif key in ["pid", "stdout"]:
         values = []
         for path in paths:
             value = get(path, key)
