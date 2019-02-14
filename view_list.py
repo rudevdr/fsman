@@ -5,11 +5,14 @@ import keeper
 import executor
 import handler
 
+import sys
 
 def update():
     update_panels()
     doupdate()
 
+def resize_windows(stdscr, lst_window, viewo):
+    pass
 
 def init(stdscr, window_posy, window_posx, paths, inc_text):
 
@@ -20,14 +23,14 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
     attribute_nounderline = color_pair(2) + A_REVERSE
 
 
+    height, width = stdscr.getmaxyx()
+
     lst_data = []
     lendinc = len(inc_text)
 
-    lst_width = len(max(paths, key=len))
-    lst_height = len(paths)
-    lst_window_height = lst_height + 2
-    lst_window_width = lst_width + lendinc + 2
-    lst_window = newwin(lst_window_height, lst_window_width, window_posy, window_posx)
+    lst_height = (11*height)//15
+    lst_width = (2*width)//5
+    lst_window = newwin(lst_height, lst_width, window_posy, window_posx)
     last_panel = new_panel(lst_window)
     lst_window.box()
 
@@ -39,8 +42,8 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
 
     keeper.add_didc(Indicator(lst_data, inc_text, 0, attribute_nounderline))
 
-    view_output_padding = 50
-    viewo = view_output.init(20, window_posy, lst_window_width, keeper)
+
+    viewo = view_output.init(lst_height, width-lst_width, window_posy, lst_width, keeper)
 
     stdscr.refresh()
     lst_window.refresh()
@@ -55,6 +58,21 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
         key = stdscr.getch()
         if key == ord('q'):
             break
+        elif key == KEY_RESIZE:
+            height, width = stdscr.getmaxyx()
+            h = (11*height)//15
+            w = (2*width)//5
+
+            lst_window.resize(h, w)
+            viewo.resize(h, width - w)
+            #viewo.move(window_posy, lst_width)
+            #lst_window.move(window_posy, window_posx)
+            sys.stdout.write(str(height)+"/"+str(width)+" ")
+
+            stdscr.refresh()
+            lst_window.refresh()
+            viewo.refresh()
+
         elif key == ord('j'):
             keeper.move_didc_down()
         elif key == ord('k'):
@@ -76,6 +94,6 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
         elif key == ord('t'):
             keeper.toggle_at_didc(Indicator(lst_data, inc_text, keeper.get_didc_index(), color_pair(1) | A_REVERSE))
 
-        view_output.update_view(viewo, ' '.join(keeper.get_all_obj()))
+        view_output.update_view(viewo, keeper.get_didc_obj())
         update()
         viewo.refresh()
