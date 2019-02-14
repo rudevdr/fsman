@@ -1,8 +1,12 @@
 import subprocess
 import shlex
+import os
 
 import handler
 import status
+
+from string import ascii_letters, digits
+from random import randint, choices
 
 
 stdscr = view_lst = view_o = lst_data = attribute_underline  = attribute_nounderline = None
@@ -46,13 +50,20 @@ def generate_command(path):
     return command
 
 
+def generate_stdout_file():
+    return ''.join(choices(ascii_letters + digits + '_', k=randint(5, 20)))
+
+
 def execute(path):
     command = generate_command(path)
-    proc = subprocess.Popen(shlex.split(command), stdout=subprocess.DEVNULL)
+    filename = 'output/'+generate_stdout_file()
+    fileobject = open(filename, 'w', 1)
+
+    proc = subprocess.Popen(shlex.split(command), stdout=fileobject)
     pid = proc.pid
 
     update_view_lst(path, underline=True)
-    status.add(path, pid, command)
+    status.add(path, pid, filename)
     dequeue([path])
 
 
