@@ -1,8 +1,7 @@
 import threading
-#from curses import newwin, doupdate
-#from curses.panel import new_panel, update_panels
-from curses import *
-from curses.panel import *
+from curses import newwin, doupdate
+from curses.panel import new_panel, update_panels
+from math import ceil
 
 import status
 import sys
@@ -11,13 +10,10 @@ from time import sleep
 
 running = False
 path = window = None
-current_path = previous_path = None
 current_read = previous_read = None
 
 
 def update_view(window_object, didc_object):
-    #window.erase()
-    #window.box()
     global window, path
     window = window_object
     path = didc_object
@@ -25,10 +21,11 @@ def update_view(window_object, didc_object):
         t = threading.Thread(target=read_display_operation)
         t.daemon = True
         t.start()
-    #window.addstr(1, 1, path)
+
 
 def get_path():
     return path
+
 
 def read_display_operation():
     #sys.stdout.write(str("MAIN")+" ")
@@ -49,14 +46,9 @@ def read_display_operation():
     #sys.stdout.write(str("END")+" ")
     #TODO: Fix multiple thread here and on handler.py
 
+
 def read_operation(path):
-    global current_read, previous_read, current_path, previous_path
-    if current_read is None:
-        current_path = path
-        current_read = open(path).readlines()
-        previous_read = current_read
-        display_operation(current_read)
-        return
+    global current_read, previous_read
 
     current_read = open(path).readlines()
     if not previous_read == current_read:
@@ -65,29 +57,30 @@ def read_operation(path):
 
 
 def display_operation(lines):
-    y, x = window.getmaxyx()
+    valid_lines = []
+    reversed_lines = reversed(lines)
+
+    height, width = window.getmaxyx()
+    height -=2
+    width -=2
+
     window.erase()
-    init_pair(1, COLOR_BLACK, COLOR_CYAN)
 
+    line_y = 0
+    for line in reversed_lines:
+        max_chars = height*width
+        if height > 0:
+            line = line[-max_chars:]
+            valid_lines.insert(0, line)
+            height -= ceil(len(line)/width)
+        else:
+            break
 
-    bottom_padding = 0
-
-    if y-2+bottom_padding<= len(lines):
-        lines = lines[-y+2+bottom_padding:]
-
-    #sys.stdout.write(str(lines)+" ")
-    for posy, line in enumerate(lines):
-        #if posy >= len(lines):
-        #    window.scroll()
-        window.addstr(1+posy, 2, line)
-        #window.bkgd(color_pair(1))
+    for posy, line in enumerate(valid_lines):
+        window.addstr(1+line_y, 2, line)
+        line_y += ceil(len(line)/width)
         window.box()
         window.refresh()
-
-class StdoutPad:
-    def __init__(self, lines, cols):
-        self = curses.newpad(lines, cols)
-
 
 
 def init(viewo_height, viewo_width, line_y, lst_window_width, keeper):
