@@ -63,6 +63,8 @@ def remove_stdout(filename):
         os.remove(filename)
     except FileNotFoundError:
         pass
+    except TypeError:
+        pass
 
 def update_view_lst(path, underline=True):
     executor.update_view_lst(path, underline=underline)
