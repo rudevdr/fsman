@@ -1,6 +1,8 @@
 import subprocess
 import shlex
 import os
+import sys
+from time import sleep
 
 import handler
 import status
@@ -8,10 +10,12 @@ import status
 from string import ascii_letters, digits
 from random import randint, choices
 
+import psutil
+
 
 stdscr = view_lst = view_o = lst_data = attribute_underline  = attribute_nounderline = None
 
-queue = []
+execute_queue = kill_queue = []
 
 
 def init(lst_data_l, attributes, stdscr_l, view_lst_l, view_o_l):
@@ -64,25 +68,67 @@ def execute(path):
 
     update_view_lst(path, underline=True)
     status.add(path, pid, filename)
-    dequeue([path])
+    execute_dequeue([path])
 
 
-def queue_updated():
-    new_paths = [path for path in queue if not status.exists(path)]
+def execute_queue_updated():
+    new_paths = [path for path in execute_queue if not status.exists(path)]
     for path in new_paths:
         execute(path)
         handler.update()
 
 
-def enqueue(paths):
+def execute_enqueue(paths):
     for path in paths:
-        if path not in queue and not status.exists(path):
-            queue.append(path)
+        if path not in execute_queue and not status.exists(path):
+            execute_queue.append(path)
 
-    queue_updated()
+    execute_queue_updated()
 
 
-def dequeue(paths):
+def execute_dequeue(paths):
     for path in paths:
-        if path in queue:
-            queue.remove(path)
+        if path in execute_queue:
+            execute_queue.remove(path)
+
+
+
+def kill(path):
+    if status.exists(path):
+        pid = status.get_from_key("pid", "path", path)
+        if handler.process_running(pid):
+            kill_process(pid)
+
+    update_view_lst(path, underline=False)
+    handler.remove_stdout(path)
+    status.remove(path)
+    kill_dequeue([path])
+
+
+def kill_process(pid, recursive=True):
+    proc = psutil.Process(pid)
+    if recursive:
+        for child_proc in proc.children(recursive=False):
+            child_proc.kill()
+
+    proc.kill()
+
+
+def kill_queue_updated():
+    new_paths = [path for path in kill_queue if status.exists(path)]
+    for path in new_paths:
+        kill(path)
+
+
+def kill_enqueue(paths):
+    for path in paths:
+        if path not in kill_queue and status.exists(path):
+            kill_queue.append(path)
+
+    kill_queue_updated()
+
+
+def kill_dequeue(paths):
+    for path in paths:
+        if path in kill_queue:
+            kill_queue.remove(path)
