@@ -88,9 +88,9 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
                 keeper.enable(Indicator(lst_data, inc_text, index, color_pair(1) | A_REVERSE))
             keeper.didc_blink()
         elif key == ord('S'):
-            executor.enqueue(keeper.get_all_obj())
+            executor.execute_enqueue(keeper.get_all_obj())
         elif key == ord('K'):
-            executor.kill(keeper.get_all_obj(), viewo)
+            executor.kill_enqueue(keeper.get_all_obj())
         elif key == ord('t'):
             keeper.toggle_at_didc(Indicator(lst_data, inc_text, keeper.get_didc_index(), color_pair(1) | A_REVERSE))
 
