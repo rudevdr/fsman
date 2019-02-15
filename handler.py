@@ -47,18 +47,20 @@ def main():
 def check_for_deaths():
     if not status.is_empty():
        pids = status.get_all("pid")
-       for pid in pids:
-           path = status.get_from_key("path", "pid", pid)
-           if path:
-               if not process_running(pid):
-                   remove_stdout(status.get(path, "stdout"))
-                   status.remove(path)
-                   update_view_lst(path, underline=False)
-               else:
-                   pass
-                   #update view_output
+       if pids:
+           for pid in pids:
+               path = status.get_from_key("path", "pid", pid)
+               if path:
+                   if not process_running(pid):
+                       remove_stdout(path)
+                       status.remove(path)
+                       update_view_lst(path, underline=False)
+                   else:
+                       pass
+                       #update view_output
 
-def remove_stdout(filename):
+def remove_stdout(path):
+    filename = status.get(path, "stdout")
     try:
         os.remove(filename)
     except FileNotFoundError:
