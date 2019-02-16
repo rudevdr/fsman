@@ -4,7 +4,8 @@ CONFIG = "fsman.cfg"
 
 default_config = {
     'Provider': {
-        'source_file': 'glob'
+        'source_file': 'glob',
+        'glob' : "*/*",
     }
 }
 
@@ -42,10 +43,13 @@ def get(item):
 
 def all_keys_default():
     '''
-    returns a tuple of key, value of all dict inside dict (secondary dicts)
+    yields a tuple of key, value of all dict inside dict (secondary dicts)
     '''
     #TODO: see doc
-    yield default_config.keys()
+
+    for k, v in d.items():
+        for key, value in v.items():
+            yield key, value
 
 def add_default(key, value):
     '''
