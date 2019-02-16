@@ -1,6 +1,6 @@
 import json
 
-SFILE = '/home/rud/proj_brutleg/brutleg/fsman/status.json'
+SFILE = '/home/rud/proj_brutleg/brutleg/ftools/fsman/status.json'
 
 
 def write(status):
