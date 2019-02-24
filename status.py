@@ -1,6 +1,7 @@
 import json
+import configurer as config
 
-SFILE = '/home/rud/proj_brutleg/brutleg/ftools/fsman/status.json'
+SFILE = config.get("status")
 
 
 def write(status):
@@ -120,7 +121,7 @@ def get_all(key):
         paths = list(status.keys())
         key = valid_key(key)
     else:
-        return None
+        return []
 
     if key == "paths":
         return paths
@@ -131,7 +132,7 @@ def get_all(key):
             values.append(value)
         return values
     else:
-        return None
+        return []
 
 
 def is_empty():
