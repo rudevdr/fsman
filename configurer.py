@@ -33,27 +33,33 @@ def get(item):
             if item == key:
                 return config.get(section, key).strip("'").strip('"')
 
-    if item in add_keys_default():
-        #TODO: if key not found in config, then check if key is in default dictionary. if it is then add to file and return the default value, else raise error
-        add_default(key, value)
-        return default
-    else:
-        raise KeyError(f'Setting for "{item}" is not found in {CONFIG}')
+    for section, key, value in iter(all_keys_default()):
+        if item == key:
+            add_config(section, key, value)
+            return value
+
+    raise KeyError(f'Setting for "{item}" is not found in {CONFIG}')
 
 
 def all_keys_default():
     '''
     yields a tuple of key, value of all dict inside dict (secondary dicts)
     '''
-    #TODO: see doc
 
-    for k, v in d.items():
+    for k, v in default_config.items():
         for key, value in v.items():
-            yield key, value
+            yield (k, key, value)
 
-def add_default(key, value):
+def add_config(section, key, value):
     '''
     writes key, value to CONFIG file
     '''
+    #config_read = configread()
+    #config = configparser.ConfigParser()
+    config = configread()
 
-    #TODO: see doc
+    if not config.has_section(section):
+        config.add_section(section)
+    config.set(section, key, value)
+    with open(CONFIG, 'w') as configfile:
+        config.write(configfile)
