@@ -5,6 +5,7 @@ import sys
 from time import sleep
 
 import handler
+import configurer as config
 import status
 
 from string import ascii_letters, digits
@@ -50,7 +51,7 @@ def update_view_lst(path, underline=True):
 
 
 def generate_command(path):
-    command = "python "+path
+    command = config.get("executor_path")+" "+path
     return command
 
 
@@ -60,7 +61,7 @@ def generate_stdout_file():
 
 def execute(path):
     command = generate_command(path)
-    filename = 'output/'+generate_stdout_file()
+    filename = config.get("output_dir")+generate_stdout_file()
     fileobject = open(filename, 'w', 1)
 
     proc = subprocess.Popen(shlex.split(command), stdout=fileobject)
