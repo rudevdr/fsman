@@ -1,9 +1,11 @@
 from glob import glob
+import configurer as config
+import sys
 
-#todo: fetch pattern from cfg
-program_paths = glob('tests/*py')
-#program_paths = glob('keeper/test_scripts/*')
-
-def glob():
+def get_paths():
+    provider_type = config.get("provider_type")
+    if provider_type == "glob":
+        program_paths = glob(config.get("glob"))
+    elif provider_type == "script":
+        program_paths = config.get("script")
     return program_paths
-
