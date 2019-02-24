@@ -2,6 +2,7 @@ from indicator import *
 
 import view_output
 import keeper
+import status
 import executor
 import handler
 
@@ -87,6 +88,25 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
             for index in range(0, len(lst_data)):
                 keeper.enable(Indicator(lst_data, inc_text, index, color_pair(1) | A_REVERSE))
             keeper.didc_blink()
+        elif key == ord('r'):
+            lst_paths = [path[0] for path in lst_data]
+            paths = status.get_all("paths")
+            for path in paths:
+                try:
+                    index = lst_paths.index(path)
+                    keeper.enable(Indicator(lst_data, inc_text, index, color_pair(1) | A_REVERSE))
+                except ValueError:
+                    pass
+        elif key == ord('R'):
+            lst_paths = [path[0] for path in lst_data]
+            paths = status.get_all("paths")
+            not_running_paths =  [path for path in lst_paths if path not in paths]
+            for path in not_running_paths:
+                try:
+                    index = lst_paths.index(path)
+                    keeper.enable(Indicator(lst_data, inc_text, index, color_pair(1) | A_REVERSE))
+                except ValueError:
+                    pass
         elif key == ord('S'):
             executor.execute_enqueue(keeper.get_all_obj())
         elif key == ord('K'):
