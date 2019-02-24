@@ -3,6 +3,7 @@ from curses import *
 from glob import glob
 
 import provider
+import configurer as config
 
 import view_list
 
@@ -20,8 +21,8 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
 
-    paths = provider.glob()
-    inc_text = "~> "
+    paths = provider.get_paths()
+    inc_text = config.get("indicator_text") + " "
     lendinc = len(inc_text)
 
     view_list.init(stdscr, 0, 0, paths, inc_text)
