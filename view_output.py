@@ -28,7 +28,7 @@ def get_path():
 
 
 def read_display_operation():
-    #sys.stdout.write(str("MAIN")+" ")
+    #TODO: Remove ^[[K0 for clear line from printer
     running = True
 
     while status.exists(get_path()):

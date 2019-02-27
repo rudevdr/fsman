@@ -64,6 +64,7 @@ def execute(path):
     filename = config.get("output_dir")+generate_stdout_file()
     fileobject = open(filename, 'w', 1)
 
+    #TODO: if program crashes show it on view output not all over file (check by running a program which crashes)
     proc = subprocess.Popen(shlex.split(command), stdout=fileobject)
     pid = proc.pid
 
