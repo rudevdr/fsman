@@ -1,13 +1,25 @@
 import configparser
+from os.path import exists
 
 CONFIG = "fsman.cfg"
 
 default_config = {
-    'Provider': {
-        'source_file': 'glob',
-        'glob' : "*/*",
-    }
-}
+        'Provider': {
+            'provider_type': 'glob',
+            'glob' : "tests/*py",
+            'script' : "provider"
+            },
+        'Output': {
+            'status': 'status.json',
+            'output_dir': "output/"
+            },
+        'FXECUTOR':{
+            'executor_path' : 'python'
+            },
+        'GUI':{
+            'indicator_text': '~>'
+            }
+        }
 
 
 def configread():
@@ -54,9 +66,10 @@ def add_config(section, key, value):
     '''
     writes key, value to CONFIG file
     '''
-    #config_read = configread()
-    #config = configparser.ConfigParser()
     config = configread()
+
+    if not exists(CONFIG):
+        open(CONFIG, 'a').write("")
 
     if not config.has_section(section):
         config.add_section(section)
