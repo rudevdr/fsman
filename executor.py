@@ -40,9 +40,9 @@ def update_view_lst(path, underline=True):
     window_posy = 0
     window_posx = 0
     if underline:
-        view_lst.addstr(data[1] -window_posy, data[2] - window_posx, path, attribute_underline)
+        view_lst.addstr(data[1] -window_posy, data[2] - window_posx, '/'.join(path.split('/')[-2:]), attribute_underline)
     else:
-        view_lst.addstr(data[1] -window_posy, data[2] - window_posx, path, attribute_nounderline)
+        view_lst.addstr(data[1] -window_posy, data[2] - window_posx, '/'.join(path.split('/')[-2:]), attribute_nounderline)
 
     stdscr.refresh()
     view_lst.refresh()

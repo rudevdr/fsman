@@ -38,7 +38,8 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
     for index, path in enumerate(paths):
         lst_y = index + 1
         lst_x = lendinc + 1
-        lst_window.addstr(lst_y, lst_x, path, attribute_nounderline)
+
+        lst_window.addstr(lst_y, lst_x, '/'.join(path.split('/')[-2:]), attribute_nounderline)
         lst_data.append((path, window_posy + lst_y, window_posx + lst_x))
 
     keeper.add_didc(Indicator(lst_data, inc_text, 0, attribute_nounderline))
