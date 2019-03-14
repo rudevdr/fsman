@@ -7,5 +7,15 @@ def get_paths():
     if provider_type == "glob":
         program_paths = glob(config.get("glob"))
     elif provider_type == "script":
-        program_paths = config.get("script")
+        provider_script = config.get("script")
+
+        import importlib.util #https://stackoverflow.com/a/67692/6420136
+        spec = importlib.util.spec_from_file_location("*", provider_script)
+        foo = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(foo)
+        except FileNotFoundError:
+            return [f"[Invalid provider script {provider_script}!", "Please make sure the path is correct.]"]
+
+        program_paths = foo.main()
     return program_paths
