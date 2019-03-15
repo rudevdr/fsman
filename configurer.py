@@ -1,7 +1,22 @@
 import configparser
-from os.path import exists
+import os
+import sys
+import argparse
 
-CONFIG = "fsman.cfg"
+def args_parser():
+    parser = argparse.ArgumentParser(description='Script launcher and manager.', add_help=True)
+    parser.add_argument('--config', "-c", metavar="FILE", help='fsman configuration file location')
+
+    args = parser.parse_args()
+    return vars(args)
+
+cfg = args_parser().get("config")
+if cfg is None:
+    CONFIG = os.path.join(os.path.dirname(os.path.realpath(__file__)), "fsman.cfg")
+else:
+    CONFIG = os.path.realpath(cfg)
+    #sys.stdout.write("cfg: "+str(os.path.realpath(cfg)))
+    #sys.stdout.write("cfg: "+str(os.path.realpath(cfg)))
 
 default_config = {
         'Provider': {
@@ -21,6 +36,7 @@ default_config = {
             }
         }
 
+REL_PATH = ["script", "status", "output_dir"]
 
 def configread():
     config = configparser.ConfigParser()
@@ -43,7 +59,14 @@ def get(item):
     for section in config.sections():
         for key in config.options(str(section)):
             if item == key:
-                return config.get(section, key).strip("'").strip('"')
+                val = config.get(section, key).strip("'").strip('"')
+                #sys.stdout.write(f'{val} ')
+                if key in REL_PATH:
+                    if os.path.abspath(val):
+                        val = os.path.join(os.path.dirname(CONFIG), val)
+                        #sys.stdout.write(f'{val} ')
+                #sys.stdout.write(str(val))
+                return val
 
     for section, key, value in iter(all_keys_default()):
         if item == key:
@@ -68,7 +91,7 @@ def add_config(section, key, value):
     '''
     config = configread()
 
-    if not exists(CONFIG):
+    if not os.path.exists(CONFIG):
         open(CONFIG, 'a').write("")
 
     if not config.has_section(section):
@@ -76,3 +99,4 @@ def add_config(section, key, value):
     config.set(section, key, value)
     with open(CONFIG, 'w') as configfile:
         config.write(configfile)
+
