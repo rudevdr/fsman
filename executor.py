@@ -65,7 +65,7 @@ def execute(path):
     fileobject = open(filename, 'w', 1)
 
     #TODO: if program crashes show it on view output not all over file (check by running a program which crashes)
-    proc = subprocess.Popen(shlex.split(command), stdout=fileobject)
+    proc = subprocess.Popen(shlex.split(command), stdout=fileobject, stderr=fileobject)
     pid = proc.pid
 
     update_view_lst(path, underline=True)
@@ -110,7 +110,7 @@ def kill(path):
 def kill_process(pid, recursive=True):
     proc = psutil.Process(pid)
     if recursive:
-        for child_proc in proc.children(recursive=False):
+        for child_proc in proc.children(recursive=recursive):
             child_proc.kill()
 
     proc.kill()
