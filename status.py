@@ -72,9 +72,7 @@ def get(path, key):
     '''
 
     path = str(path)
-    key = valid_key(key)
-    if key not in ["pid", "stdout"]:
-        return None
+    #key = valid_key(key)
 
     if exists(path):
         status = read()
@@ -95,7 +93,7 @@ def get_from_key(item, key, value):
     all_values = get_all(key)
     if all_values and value in all_values:
         index = all_values.index(value)
-        item_key = valid_key(item)
+        #item_key = valid_key(item)
 
         paths = get_all("paths")
         path = None
@@ -109,30 +107,29 @@ def get_from_key(item, key, value):
         else:
             return None
 
-        if item_key == "paths":
+        if item == "paths":
             return path
-        elif item_key in ["pid", "stdout"]:
-            return get(path, item_key)
+        else:
+            return get(path, item)
 
 
 def get_all(key):
     status = read()
     if status:
         paths = list(status.keys())
-        key = valid_key(key)
+        #key = valid_key(key)
     else:
         return []
 
     if key == "paths":
         return paths
-    elif key in ["pid", "stdout"]:
+    else:
         values = []
         for path in paths:
             value = get(path, key)
-            values.append(value)
+            if value is not None:
+                values.append(value)
         return values
-    else:
-        return []
 
 
 def is_empty():

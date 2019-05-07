@@ -15,8 +15,6 @@ if cfg is None:
     CONFIG = os.path.join(os.path.dirname(os.path.realpath(__file__)), "fsman.cfg")
 else:
     CONFIG = os.path.realpath(cfg)
-    #sys.stdout.write("cfg: "+str(os.path.realpath(cfg)))
-    #sys.stdout.write("cfg: "+str(os.path.realpath(cfg)))
 
 default_config = {
         'Provider': {
@@ -29,14 +27,16 @@ default_config = {
             'output_dir': "output/"
             },
         'FXECUTOR':{
-            'executor_path' : 'python'
+            'executor_path' : 'python',
+            'kill': "recursive pid"
             },
         'GUI':{
             'indicator_text': '~>'
             }
         }
 
-REL_PATH = ["script", "status", "output_dir"]
+
+REL_PATH = ["script", "status", "output_dir"] #these keys path are rel to CONFIG path
 
 def configread():
     config = configparser.ConfigParser()
@@ -60,12 +60,9 @@ def get(item):
         for key in config.options(str(section)):
             if item == key:
                 val = config.get(section, key).strip("'").strip('"')
-                #sys.stdout.write(f'{val} ')
                 if key in REL_PATH:
                     if os.path.abspath(val):
                         val = os.path.join(os.path.dirname(CONFIG), val)
-                        #sys.stdout.write(f'{val} ')
-                #sys.stdout.write(str(val))
                 return val
 
     for section, key, value in iter(all_keys_default()):
@@ -100,3 +97,4 @@ def add_config(section, key, value):
     with open(CONFIG, 'w') as configfile:
         config.write(configfile)
 
+[get(key) for section, key, value in iter(all_keys_default())] #creats a key if key is not created
