@@ -182,5 +182,8 @@ def kill_process(pid, recursive=True):
     if recursive:
         for child_proc in proc.children(recursive=recursive):
             sys.stdout.write(f" killing recursive: {child_proc}")
-            child_proc.kill()
+            try:
+                child_proc.kill()
+            except psutil.NoSuchProcess:
+                pass
     proc.kill()
