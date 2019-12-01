@@ -72,7 +72,8 @@ def execute(path):
     fileobject = open(filename, 'w', 1)
 
     #TODO: if program crashes show it on view output not all over file (check by running a program which crashes)
-    proc = subprocess.Popen(shlex.split(command), stdout=fileobject, stderr=fileobject)
+    #proc = subprocess.Popen(shlex.split(command), stdout=fileobject, stderr=fileobject)
+    proc = subprocess.Popen(command, shell=True, stdout=fileobject, stderr=fileobject)
     pid = proc.pid
 
     update_view_lst(path, underline=True)
