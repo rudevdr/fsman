@@ -6,7 +6,43 @@ import status
 import executor
 import handler
 
+import os
 import sys
+
+import curses, time, subprocess
+
+class suspend_curses():
+    """Context Manager to temporarily leave curses mode"""
+    def __init__(self, command, stdscr, window_posy, window_posx, paths, inc_text):
+        self.command = command
+        self.stdscr = stdscr
+        self.window_posy = window_posy
+        self.window_posx = window_posx
+        self.paths = paths
+        self.inc_text = inc_text
+
+
+    def __enter__(self):
+        #curses.nocbreak()
+        #curses.echo()
+        #try:
+        #    curses.curs_set(1)
+        #except curses.error:
+        #    pass
+        endwin()
+        subprocess.call(self.command.split())
+
+    def __exit__(self, exc_type, exc_val, tb):
+        #newscr = curses.initscr()
+#       # newscr.addstr('Newscreen is %s\n' % newscr)
+        #newscr.refresh()
+        #curses.doupdate()
+        init(self.stdscr, self.window_posy, self.window_posx, self.paths, self.inc_text)
+
+def run(command):
+    endwin()
+    subprocess.call(command.split())
+    #init(stdscr, window_posy, window_posx, paths, inc_text)
 
 def update():
     update_panels()
@@ -112,6 +148,11 @@ def init(stdscr, window_posy, window_posx, paths, inc_text):
             executor.execute_enqueue(keeper.get_all_obj())
         elif key == ord('K'):
             executor.kill_enqueue(keeper.get_all_obj())
+        elif key == ord('V'):
+            stdout_path_ = status.get(keeper.get_didc_obj(), 'stdout')
+            if stdout_path_:
+                break
+
         elif key == ord('t'):
             keeper.toggle_at_didc(Indicator(lst_data, inc_text, keeper.get_didc_index(), color_pair(1) | A_REVERSE))
 
